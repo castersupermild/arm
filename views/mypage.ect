@@ -1,0 +1,14 @@
+<% extend 'base.ect' %>
+
+<% block 'title' : %>
+  <title><%= @title %></title>
+<% end %>
+
+<% block 'body' : %>
+  <user-form :user="user"></user-form>
+  <input type="hidden" id="userData" value="<%= JSON.stringify(@user) %>">
+<% end %>
+
+<% block 'scripts' : %>
+  <%- @helpers.assetPath.jsPath('mypage.js') %>
+<% end %>

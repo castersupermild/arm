@@ -1,0 +1,55 @@
+<% extend 'base.ect' %>
+
+<% block 'title' : %>
+  <title><%= @title %></title>
+<% end %>
+
+<% block 'body' : %>
+  <div>
+    <h3 class="display-1">Rate Match Rules</h3>
+    <v-card>
+      <v-card-title primary-title>
+        <div>
+          <h3 class="headline mb-0">Characters</h3>
+        </div>
+      </v-card-title>
+      <v-card-text>All characters allowed</v-card-text>
+      <v-card-title primary-title>
+        <div>
+          <h3 class="headline mb-0">ARMS</h3>
+        </div>
+      </v-card-title>
+      <v-card-text>All ARMS allowed on all characters</v-card-text>
+      <v-card-title primary-title>
+        <div>
+          <h3 class="headline mb-0">Time</h3>
+        </div>
+      </v-card-title>
+      <v-card-text>99 Seconds per round</v-card-text>
+      <v-card-title primary-title>
+        <div>
+          <h3 class="headline mb-0">Games</h3>
+        </div>
+      </v-card-title>
+      <v-card-text>Best 2 of 3 rounds determines winner of a match</v-card-text>
+        <v-card-title primary-title>
+          <div>
+            <h3 class="headline mb-0">Stage Selection(any of the following)</h3>
+          </div>
+        </v-card-title>
+        <v-card-text>Spring Stadium</v-card-text>
+        <v-card-text>Ribbon Ring</v-card-text>
+        <v-card-text>Ninja College</v-card-text>
+        <v-card-text>Mausoleum</v-card-text>
+        <v-card-text>Scrapyard</v-card-text>
+        <v-card-text>DNA Lab</v-card-text>
+        <v-card-text>Via Dolce</v-card-text>
+        <v-card-text>Temple Grounds</v-card-text>
+        <v-card-text>Sparring Ring</v-card-text>
+    </v-card>
+  </div>
+<% end %>
+
+<% block 'scripts' : %>
+  <%- @helpers.assetPath.jsPath('index.js') %>
+<% end %>

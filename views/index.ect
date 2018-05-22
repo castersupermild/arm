@@ -1,0 +1,24 @@
+<% extend 'base.ect' %>
+
+<% block 'title' : %>
+  <title><%= @title %></title>
+<% end %>
+
+<% block 'body' : %>
+
+  <h1><%= @title %></h1>
+  <p>Welcome to <%= @title %></p>
+
+  <div>
+    your uid is <%= @uid %>
+  </div>
+
+  <div>
+    session count: <%= @count %>
+  </div>
+
+<% end %>
+
+<% block 'scripts' : %>
+  <%- @helpers.assetPath.jsPath('index.js') %>
+<% end %>

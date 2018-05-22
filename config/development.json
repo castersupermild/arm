@@ -1,0 +1,13 @@
+{
+  "app": {
+    "logging": {
+      "log4js": {
+        "categories": {
+          "api": {
+            "level": "debug"
+          }
+        }
+      }
+    }
+  }
+}

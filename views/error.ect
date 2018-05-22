@@ -1,0 +1,13 @@
+<% extend 'base.ect' %>
+
+<% block 'title' : %>
+  <title><%= @title %></title>
+<% end %>
+
+<% block 'body' : %>
+  <h1><%= @message %></h1>
+  <% if @error : %>
+    <h2><%= @error.status %></h2>
+    <pre><%= @error.stack %></pre>
+  <% end %>
+<% end %>

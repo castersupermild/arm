@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <% content %>
+  <head>
+    <meta charset="utf-8">
+    <% content 'title' %>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <% content 'stylesheets' %>
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <arm-nav :logined="logined"></arm-nav>
+        <v-content>
+          <v-container>
+            <% content 'body' %>
+          </v-container>
+        </v-content>
+        <% include 'common/footer' %>
+      </v-app>
+    </div>
+    <% if @helpers.user.existsSession(@req) : %>
+      <input type="hidden" id="logined">
+    <% end %>
+    <% content 'scripts' %>
+  </body>
+</html>

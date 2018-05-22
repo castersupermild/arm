@@ -1,0 +1,56 @@
+{
+ "common": {
+   "projectName": "arm",
+   "session": {
+     "secret": "abc",
+     "cookieMaxAge": 86400000
+   },
+   "uid": {
+     "cookieKey": "uid",
+     "cookieMaxAge": 315360000000
+   }
+ },
+ "mongodb": {
+   "host": "abc",
+   "db": "abc",
+   "user": "abc",
+   "password": "abc",
+   "parameter" : "abc"
+ },
+ "twitter": {
+   "consumerKey": "abc",
+   "consumerSecret": "abc",
+   "callbackUrl": "abc"
+ },
+ "app": {
+   "logging": {
+     "log4js": {
+       "appenders": {
+         "console": {
+           "type": "console"
+         },
+         "application": {
+           "type": "console"
+         },
+         "api": {
+           "type": "console"
+         }
+       },
+       "categories": {
+         "default": {
+           "appenders": ["console"],
+           "level": "info"
+         },
+         "application": {
+           "appenders": ["application"],
+           "level": "info"
+         },
+         "api": {
+           "appenders": ["api"],
+           "level": "error"
+         }
+       }
+     }
+   }
+ }
+}
