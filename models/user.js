@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const logger = require('../logging/logger').appLogger;
-
 const LANG_EN = 'en';
 const LANG_EN_US = 'en-US';
 const LANG_EN_GB = 'en-GB';
@@ -105,7 +103,6 @@ function registerUser(profile, accessToken, refreshToken) {
 }
 
 function updateUser(twitterId, userData) {
-  logger.info(userData);
   return new Promise((resolve, reject) => {
     User.findOneAndUpdate({ twitterId }, userData, (error, user) => {
       if (error) {

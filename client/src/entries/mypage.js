@@ -12,7 +12,7 @@ new Vue({
   components: { ArmNav, UserForm },
   data() {
     return {
-      logined: !!document.getElementById('logined'),
+      logined: !!document.getElementById('currentUser'),
       user: JSON.parse(document.getElementById('userData').value),
     };
   },

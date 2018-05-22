@@ -11,7 +11,7 @@ new Vue({
   components: { ArmNav },
   data() {
     return {
-      logined: !!document.getElementById('logined'),
+      logined: !!document.getElementById('currentUser'),
     };
   },
 });

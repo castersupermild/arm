@@ -1,35 +1,81 @@
-const moment = require('moment');
 const mongoose = require('mongoose');
+const logger = require('../logging/logger').appLogger;
 
 const { Schema } = mongoose;
 
-const STATUS_READY = 1;
-const STATUS_ACTIVE = 2;
-const STATUS_FINISHED = 3;
-const STATUS_INVALID = 4;
+const STATUS_NOT_READY = 1;
+const STATUS_READY = 2;
+const STATUS_LEFT = 3;
 
-const DEFAULT_WAITING_TIME = 10;
+const MATCH_RESULT_WAITING = 0;
+const MATCH_RESULT_P1_WIN = 1;
+const MATCH_RESULT_P2_WIN = 2;
+const MATCH_RESULT_DRAW = 3;
+const MATCH_RESULT_INVALID = 4;
 
-const RoomSchema = new mongoose.Schema({
-  eventId: { type: Schema.Types.ObjectId, index: true },
-  userId1: { type: Schema.Types.ObjectId, index: true },
-  userId2: { type: Schema.Types.ObjectId, index: true },
-  waitingLimit: {
-    type: Date,
-    default: moment().add(DEFAULT_WAITING_TIME, 'minute'),
+const RoomSchema = new Schema({
+  roomId: { type: String, index: true },
+  userId1: { type: String, index: true },
+  userId2: { type: String, index: true },
+  passcode: { type: String },
+  status1: {
+    type: Number,
+    required: true,
+    default: STATUS_NOT_READY,
+    index: true,
   },
-  winner: { type: Schema.Types.ObjectId },
-  loser: { type: Schema.Types.ObjectId },
-  status: { type: Number, required: true, default: STATUS_READY, index: true },
+  status2: {
+    type: Number,
+    required: true,
+    default: STATUS_NOT_READY,
+    index: true,
+  },
+  result1: { type: Number, default: MATCH_RESULT_WAITING, index: true },
+  result2: { type: Number, default: MATCH_RESULT_WAITING, index: true },
   createdAt: { type: Date, default: Date.now },
 });
 
+const Room = mongoose.model('Room', RoomSchema);
+
+function getCurrentUserRoom(currentTwitterId) {
+  return new Promise((resolve, reject) => {
+    Room.find(
+      {
+        $or: [
+          {
+            userId1: currentTwitterId,
+            status1: { $ne: STATUS_LEFT },
+          },
+          {
+            userId2: currentTwitterId,
+            status2: { $ne: STATUS_LEFT },
+          },
+        ],
+      },
+      (error, rooms) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(rooms);
+        }
+      }
+    );
+  });
+}
+
 module.exports = {
   constants: {
-    STATUS_READY,
-    STATUS_ACTIVE,
-    STATUS_FINISHED,
-    STATUS_INVALID,
+    roomStatus: {
+      STATUS_NOT_READY,
+      STATUS_READY,
+      STATUS_LEFT,
+    },
+    matchResult: {
+      MATCH_RESULT_P1_WIN,
+      MATCH_RESULT_P2_WIN,
+      MATCH_RESULT_DRAW,
+      MATCH_RESULT_INVALID,
+    },
   },
-  Room: mongoose.model('Room', RoomSchema),
+  Room,
 };

@@ -24,7 +24,7 @@
       </v-app>
     </div>
     <% if @helpers.user.existsSession(@req) : %>
-      <input type="hidden" id="logined">
+      <input type="hidden" id="currentUser" value="<%= @helpers.user.getTwitterId(@req) %>">
     <% end %>
     <% content 'scripts' %>
   </body>

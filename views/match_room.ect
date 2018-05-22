@@ -5,43 +5,9 @@
 <% end %>
 
 <% block 'body' : %>
-  <v-container grid-list-xl>
-    <v-layout v-bind="binding">
-      <v-flex>
-        <v-card>
-          <v-card-title primary-title>
-            <div>
-              <h3 class="headline mb-0">Player1: {{ player1.armsName }}</h3>
-            </div>
-          </v-card-title>
-          <v-card-text>one</v-card-text>
-        </v-card>
-      </v-flex>
-      <v-flex md1>
-        <v-card-title primary-title>
-          <div>
-            <h3 class="headline mb-0">vs</h3>
-          </div>
-        </v-card-title>
-      </v-flex>
-      <v-flex>
-        <v-card>
-          <v-card-title primary-title>
-            <div>
-              <h3 class="headline mb-0">Player2: {{ player2.armsName || 'waiting' }}</h3>
-            </div>
-          </v-card-title>
-          <v-card-text>three</v-card-text>
-        </v-card>
-      </v-flex>
-    </v-layout>
-    <div>
-      <v-btn round color="primary" small>1P Win</v-btn>
-      <v-btn round color="info" small>2P Win</v-btn>
-      <v-btn round color="warning" small>Draw</v-btn>
-      <v-btn round color="error" small>Invalid Match</v-btn>
-    </div>
-  </v-container>
+  <match-room :player1="player1" :player2="player2"></match-room>
+  <input type="hidden" id="player1" value="<%= JSON.stringify(@player1) %>">
+  <input type="hidden" id="player2" value="<%= JSON.stringify(@player2) %>">
 <% end %>
 
 <% block 'scripts' : %>

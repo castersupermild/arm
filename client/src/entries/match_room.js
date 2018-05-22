@@ -1,31 +1,21 @@
 const Vue = require('vue');
 const Vuetify = require('vuetify');
 const ArmNav = require('../modules/Nav.vue').default;
+const MatchRoom = require('../modules/MatchRoom.vue').default;
 
 Vue.use(Vuetify);
+
+const currentUser = document.getElementById('currentUser');
 // eslint-disable-next-line no-new
 new Vue({
   el: '#app',
-  components: { ArmNav },
+  components: { ArmNav, MatchRoom },
   data() {
     return {
-      logined: !!document.getElementById('logined'),
-      player1: {
-        name: 'abc',
-      },
-      player2: {},
+      logined: !!currentUser,
+      currentUser: currentUser ? currentUser.value : null,
+      player1: JSON.parse(document.getElementById('player1').value),
+      player2: JSON.parse(document.getElementById('player2').value),
     };
-  },
-
-  computed: {
-    binding() {
-      const binding = {};
-      if (this.$vuetify.breakpoint.mdAndUp) {
-        binding.column = false;
-      } else {
-        binding.column = true;
-      }
-      return binding;
-    },
   },
 });
