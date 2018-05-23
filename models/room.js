@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const uuidv4 = require('uuid/v4');
 const logger = require('../logging/logger').appLogger;
 
 const { Schema } = mongoose;
@@ -12,12 +13,16 @@ const MATCH_RESULT_P1_WIN = 1;
 const MATCH_RESULT_P2_WIN = 2;
 const MATCH_RESULT_DRAW = 3;
 const MATCH_RESULT_INVALID = 4;
+const MATCH_RESULT_LEFT = 5;
 
 const RoomSchema = new Schema({
   roomId: { type: String, index: true },
   userId1: { type: String, index: true },
   userId2: { type: String, index: true },
-  passcode: { type: String },
+  passcode: {
+    type: String,
+    default: String(Math.floor(Math.random() * 1000)).padStart(3, '0'),
+  },
   status1: {
     type: Number,
     required: true,
@@ -37,6 +42,16 @@ const RoomSchema = new Schema({
 
 const Room = mongoose.model('Room', RoomSchema);
 
+function createRoom(twitterId1, twitterId2) {
+  const roomId = uuidv4();
+  const room = new Room({
+    roomId,
+    userId1: twitterId1,
+    userId2: twitterId2,
+  });
+  return room.save();
+}
+
 function getCurrentUserRoom(currentTwitterId) {
   return new Promise((resolve, reject) => {
     Room.find(
@@ -44,11 +59,11 @@ function getCurrentUserRoom(currentTwitterId) {
         $or: [
           {
             userId1: currentTwitterId,
-            status1: { $ne: STATUS_LEFT },
+            status1: MATCH_RESULT_WAITING,
           },
           {
             userId2: currentTwitterId,
-            status2: { $ne: STATUS_LEFT },
+            status2: MATCH_RESULT_WAITING,
           },
         ],
       },
@@ -56,7 +71,7 @@ function getCurrentUserRoom(currentTwitterId) {
         if (error) {
           reject(error);
         } else {
-          resolve(rooms);
+          resolve(rooms.length ? rooms[0] : null);
         }
       }
     );
@@ -75,7 +90,10 @@ module.exports = {
       MATCH_RESULT_P2_WIN,
       MATCH_RESULT_DRAW,
       MATCH_RESULT_INVALID,
+      MATCH_RESULT_LEFT,
     },
   },
   Room,
+  createRoom,
+  getCurrentUserRoom,
 };

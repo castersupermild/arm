@@ -12,6 +12,7 @@ new Vue({
   data() {
     return {
       logined: !!document.getElementById('currentUser'),
+      matchReady: !!document.getElementById('matchReady'),
     };
   },
 });

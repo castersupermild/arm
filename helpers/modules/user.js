@@ -1,4 +1,5 @@
 const userModule = require('../../models/user');
+const matchHelper = require('./match');
 
 const helper = {
   existsSession: req =>
@@ -35,6 +36,23 @@ const helper = {
 
   getMatchConditionConnectionLabels(connectionType) {
     return userModule.getMatchConditionConnectionLabels()[connectionType];
+  },
+
+  isMatchReady(req) {
+    const user = helper.getUser(req);
+    if (!user) {
+      return false;
+    }
+    return matchHelper.isMatchReady(user);
+  },
+
+  // eslint-disable-next-line consistent-return
+  isAuthenticated(req, res, next) {
+    if (!helper.existsSession(req)) {
+      res.redirect('/');
+    } else {
+      return next();
+    }
   },
 };
 

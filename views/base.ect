@@ -10,11 +10,22 @@
     <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     <% content 'stylesheets' %>
+    <style>
+      .list__tile__title label {
+        font-size: 13px;
+        color: black;
+      }
+
+      .rateMatchButton {
+        padding-left: 3px;
+        height: 32px;
+      }
+    </style>
   </head>
   <body>
     <div id="app">
       <v-app>
-        <arm-nav :logined="logined"></arm-nav>
+        <arm-nav :logined="logined" :match-ready="matchReady"></arm-nav>
         <v-content>
           <v-container>
             <% content 'body' %>
@@ -23,8 +34,12 @@
         <% include 'common/footer' %>
       </v-app>
     </div>
+    <input type="hidden" id="csrfToken" value="<%= @req.csrfToken() %>">
     <% if @helpers.user.existsSession(@req) : %>
       <input type="hidden" id="currentUser" value="<%= @helpers.user.getTwitterId(@req) %>">
+      <% if @helpers.user.isMatchReady(@req) : %>
+        <input type="hidden" id="matchReady">
+      <% end %>
     <% end %>
     <% content 'scripts' %>
   </body>

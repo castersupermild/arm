@@ -14,6 +14,7 @@ new Vue({
     return {
       logined: !!currentUser,
       currentUser: currentUser ? currentUser.value : null,
+      matchReady: !!document.getElementById('matchReady'),
       player1: JSON.parse(document.getElementById('player1').value),
       player2: JSON.parse(document.getElementById('player2').value),
     };

@@ -145,7 +145,11 @@ module.exports = {
     updateUser() {
       this.updateButtonLoading = true;
       axios
-        .post('/auth/mypage/update', this.user)
+        .post('/auth/mypage/update', this.user, {
+          headers: {
+            'X-XSRF-Token': document.getElementById('csrfToken').value,
+          },
+        })
         .then(() => {
           this.text = 'Data has been successfully updated';
           this.color = 'success';

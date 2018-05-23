@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 const config = require('config');
 const passport = require('passport');
 const { twitterStrategy } = require('./routes/auth');
+const csurf = require('csurf');
 const { appLogger } = require('./logging/logger');
 
 const indexRouter = require('./routes/index');
@@ -58,6 +59,9 @@ passport.use(twitterStrategy);
 app.use(frontLib.web.session);
 app.use(passport.initialize());
 app.use(passport.session());
+
+// for csrf
+app.use(csurf({ cookie: true }));
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
 

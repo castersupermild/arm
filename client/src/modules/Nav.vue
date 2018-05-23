@@ -2,6 +2,7 @@
   <div>
     <v-navigation-drawer
       v-model="drawer"
+      witdh="350"
       fixed
       app
     >
@@ -16,14 +17,16 @@
           </v-list-tile-content>
         </v-list-tile>
         <v-list-tile
-          v-if="logined"
-          href="/match">
+          v-if="logined">
           <v-list-tile-action>
             <v-icon color="red">fa-fire</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title>
-              Rate Match
+            <v-list-tile-title class="rateMatchButton">
+              <v-switch
+                v-model="matchStatusReady"
+                label="Rate Match"
+              />
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -55,16 +58,46 @@
 </template>
 
 <script>
+const axios = require('axios');
+
 module.exports = {
-  props: ['logined'],
+  props: ['logined', 'matchReady'],
+
   data() {
     return {
       drawer: null,
+      matchStatusReady: this.matchReady,
+      noPolling: false,
     };
   },
+
+  watch: {
+    matchStatusReady(newVal) {
+      axios
+        .post(
+          '/match/updateMatchStatus',
+          { matchStatusReady: newVal },
+          {
+            headers: {
+              'X-XSRF-Token': document.getElementById('csrfToken').value,
+            },
+          }
+        )
+        .then(() => {
+          // TODO: polling start
+        });
+    },
+  },
+
   methods: {
     loginOrMypage() {
       window.location.href = this.logined ? '/auth/mypage' : '/auth/twitter';
+    },
+
+    startFindMatchUser() {},
+
+    findMatchUser() {
+      //
     },
   },
 };

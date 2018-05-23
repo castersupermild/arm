@@ -10,7 +10,7 @@ const logger = require('../logging/logger').appLogger;
 const { User } = userModule;
 const userHelper = require('../helpers/modules/user');
 
-router.get('/mypage', (req, res /* , next */) => {
+router.get('/mypage', userHelper.isAuthenticated, (req, res /* , next */) => {
   if (!userHelper.existsSession(req)) {
     res.redirect('/');
   } else {
@@ -24,7 +24,10 @@ router.get('/mypage', (req, res /* , next */) => {
   }
 });
 
-router.post('/mypage/update', (req, res /* , next */) => {
+router.post('/mypage/update', userHelper.isAuthenticated, (
+  req,
+  res /* , next */
+) => {
   const params = req.body;
   if (params.twitterId !== userHelper.getTwitterId(req)) {
     throw new Error('omg');
