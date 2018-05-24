@@ -13,6 +13,7 @@ new Vue({
     return {
       logined: !!document.getElementById('currentUser'),
       matchReady: !!document.getElementById('matchReady'),
+      noPolling: !!document.getElementById('noPolling'),
       activeUserCount:
         (document.getElementById('activeUserCount') || {}).value || '0',
     };
