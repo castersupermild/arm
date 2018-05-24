@@ -1,6 +1,6 @@
 const userModule = require('../../models/user');
 
-const userConstants = userModule.constants;
+const userConstants = userModule.Constants;
 
 const STATUS_WAITING = 1;
 const STATUS_MATCHING = 2;
@@ -9,9 +9,9 @@ const targetUsers = {};
 
 const matchConnection = (user1, user2) => {
   if (
-    user1.matchCondition.connection ===
-      userConstants.MATCH_CONDITION_CONNECTION_LAN_ONLY &&
-    user2.connectionType === userConstants.CONNECTION_TYPE_WIFI
+    user1.matchConditionConnection ===
+      userConstants.matchCondition.connection.LAN_ONLY &&
+    user2.connectionType === userConstants.connectionType.CONNECTION_TYPE_WIFI
   ) {
     return false;
   }
@@ -20,15 +20,14 @@ const matchConnection = (user1, user2) => {
 
 const matchRating = (user1, user2) => {
   if (
-    user1.matchCondtion.rating ===
-    userConstants.MATCH_CONDITION_RATING_UNLIMITED
+    user1.matchCondtionRating === userConstants.matchCondition.rating.UNLIMITED
   ) {
     return true;
   }
 
   const computedRating =
-    user1.matchCondition.rating ===
-    userConstants.MATCH_CONDITION_RATING_WITHIN_100
+    user1.matchConditionRating ===
+    userConstants.matchCondition.rating.WITHIN_100
       ? 100
       : 200;
 
@@ -57,23 +56,21 @@ const helper = {
       status: STATUS_WAITING,
       connectionType: user.connectionType,
       rating: user.rating,
-      matchCondtion: {
-        connection: user.matchConditionConnection,
-        rating: user.matchConditionRating,
-      },
+      matchConditionConnection: user.matchConditionConnection,
+      matchConditionRating: user.matchConditionRating,
     };
   },
 
   removeWaitingUser(user) {
-    targetUsers[user.twitterId] = undefined;
+    delete targetUsers[user.twitterId];
   },
 
-  updateStatusToMatching(user) {
-    helper.updateStatus(user.twitterId, STATUS_MATCHING);
+  updateStatusToMatching(twitterId) {
+    helper.updateStatus(twitterId, STATUS_MATCHING);
   },
 
-  updateStatusToWaiting(user) {
-    helper.updateStatus(user.twitterId, STATUS_WAITING);
+  updateStatusToWaiting(twitterId) {
+    helper.updateStatus(twitterId, STATUS_WAITING);
   },
 
   updateStatus(twitterId, status) {
@@ -83,6 +80,11 @@ const helper = {
 
   isMatchReady(user) {
     return !!targetUsers[user.twitterId];
+  },
+
+  isMatchStatusMatching(twitterId) {
+    const user = targetUsers[twitterId];
+    return user && user.status === STATUS_MATCHING;
   },
 
   findMatchUser(currentUser) {
@@ -99,7 +101,13 @@ const helper = {
     if (!candidates.length) {
       return null;
     }
-    return candidates[Math.floor(Math.random() * candidates.length)].twitterId;
+    return targetUsers[
+      candidates[Math.floor(Math.random() * candidates.length)]
+    ].twitterId;
+  },
+
+  countActiveUser() {
+    return Object.keys(targetUsers).length;
   },
 };
 

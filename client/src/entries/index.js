@@ -13,6 +13,8 @@ new Vue({
     return {
       logined: !!document.getElementById('currentUser'),
       matchReady: !!document.getElementById('matchReady'),
+      activeUserCount:
+        (document.getElementById('activeUserCount') || {}).value || '0',
     };
   },
 });

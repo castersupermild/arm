@@ -11,7 +11,7 @@ router.get('/', (req, res /* , next */) => {
   logger.warn(`warn current count: ${req.session.count}`);
   logger.error(`error current count: ${req.session.count}`);
   res.render('index', {
-    title: 'Express',
+    title: 'Name TBD...',
     uid: req.uid,
     count,
   });

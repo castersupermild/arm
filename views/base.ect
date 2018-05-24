@@ -20,12 +20,21 @@
         padding-left: 3px;
         height: 32px;
       }
+
+      .list__tile__action .red--text {
+        padding-left: 3px;
+      }
+
+      a.appTitle {
+        text-decoration: none !important;
+        color: black;
+      }
     </style>
   </head>
   <body>
     <div id="app">
       <v-app>
-        <arm-nav :logined="logined" :match-ready="matchReady"></arm-nav>
+        <arm-nav :logined="logined" :match-ready="matchReady" :active-user-count="activeUserCount" :no-polling="noPolling"></arm-nav>
         <v-content>
           <v-container>
             <% content 'body' %>
@@ -37,8 +46,12 @@
     <input type="hidden" id="csrfToken" value="<%= @req.csrfToken() %>">
     <% if @helpers.user.existsSession(@req) : %>
       <input type="hidden" id="currentUser" value="<%= @helpers.user.getTwitterId(@req) %>">
+      <input type="hidden" id="activeUserCount" value="<%= @helpers.user.getActiveUserCount() %>">
       <% if @helpers.user.isMatchReady(@req) : %>
         <input type="hidden" id="matchReady">
+      <% end %>
+      <% if @noPolling : %>
+        <input type="hidden" id="noPolling">
       <% end %>
     <% end %>
     <% content 'scripts' %>

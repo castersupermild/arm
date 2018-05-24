@@ -38,6 +38,10 @@ const helper = {
     return userModule.getMatchConditionConnectionLabels()[connectionType];
   },
 
+  getActiveUserCount() {
+    return matchHelper.countActiveUser();
+  },
+
   isMatchReady(req) {
     const user = helper.getUser(req);
     if (!user) {

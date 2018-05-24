@@ -4,22 +4,21 @@ const express = require('express');
 const router = express.Router();
 const TwitterStrategy = require('passport-twitter');
 const userModule = require('../models/user');
-
 const logger = require('../logging/logger').appLogger;
-
-const { User } = userModule;
 const userHelper = require('../helpers/modules/user');
 
-router.get('/mypage', userHelper.isAuthenticated, (req, res /* , next */) => {
+router.get('/mypage', userHelper.isAuthenticated, async (
+  req,
+  res /* , next */
+) => {
   if (!userHelper.existsSession(req)) {
     res.redirect('/');
   } else {
-    User.findOne({ twitterId: userHelper.getTwitterId(req) }, (error, user) => {
-      req.session.user = user;
-      res.render('mypage', {
-        title: 'MyPage',
-        user,
-      });
+    const user = await userModule.findByTwitterId(userHelper.getTwitterId(req));
+    req.session.user = user;
+    res.render('mypage', {
+      title: 'MyPage',
+      user,
     });
   }
 });

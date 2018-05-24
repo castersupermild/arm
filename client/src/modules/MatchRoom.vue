@@ -5,7 +5,7 @@
         <v-card>
           <v-card-title primary-title>
             <div>
-              <h3 class="headline mb-0">12345: {{ player1.armsName }}</h3>
+              <h3 class="headline mb-0">Player1: {{ player1.armsName }}</h3>
             </div>
           </v-card-title>
           <v-card-text>one</v-card-text>
@@ -22,30 +22,26 @@
         <v-card>
           <v-card-title primary-title>
             <div>
-              <h3 class="headline mb-0">23456: {{ player2.armsName || 'waiting...' }}</h3>
+              <h3 class="headline mb-0">Player2: {{ player2.armsName }}</h3>
             </div>
           </v-card-title>
           <v-card-text>three</v-card-text>
         </v-card>
       </v-flex>
     </v-layout>
-    <div>
+    <div v-show="showButton">
       <v-btn
         round
         color="primary"
-        small>1P Win</v-btn>
-      <v-btn
-        round
-        color="info"
-        small>2P Win</v-btn>
-      <v-btn
-        round
-        color="warning"
-        small>Draw</v-btn>
+        small>Win</v-btn>
       <v-btn
         round
         color="error"
-        small>Invalid Match</v-btn>
+        small>Lose</v-btn>
+      <v-btn
+        round
+        color="warning"
+        small>Leave</v-btn>
     </div>
   </v-container>
 </template>
@@ -55,13 +51,16 @@ const axios = require('axios');
 
 module.exports = {
   props: {
+    room: { type: Object },
     currentUser: { type: String },
     player1: { type: Object, required: true },
     player2: { type: Object, required: true },
   },
 
   data() {
-    return {};
+    return {
+      showButton: true,
+    };
   },
 
   computed: {
@@ -73,6 +72,13 @@ module.exports = {
         binding.column = true;
       }
       return binding;
+    },
+
+    showButton() {
+      return (
+        this.currentUser === this.room.userId1 ||
+        this.currentUser === this.room.userId2
+      );
     },
   },
 

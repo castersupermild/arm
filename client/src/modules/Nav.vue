@@ -30,6 +30,15 @@
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <v-list-tile
+          v-if="logined">
+          <v-list-tile-action>
+            <v-icon>arrow_right</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Active User: {{ activeUser }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
         <v-list-tile href="/ranking">
           <v-list-tile-action>
             <v-icon>format_list_numbered</v-icon>
@@ -52,7 +61,9 @@
       fixed
       app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"/>
-      <v-toolbar-title href="/">Application</v-toolbar-title>
+      <v-toolbar-title><a
+        href="/"
+        class="appTitle">Name TBD...</a></v-toolbar-title>
     </v-toolbar>
   </div>
 </template>
@@ -61,31 +72,37 @@
 const axios = require('axios');
 
 module.exports = {
-  props: ['logined', 'matchReady'],
+  props: ['logined', 'matchReady', 'activeUserCount', 'noPolling'],
 
   data() {
     return {
       drawer: null,
       matchStatusReady: this.matchReady,
-      noPolling: false,
+      notFindMatchUser: this.noPolling,
+      activeUser: this.activeUserCount,
     };
   },
 
+  mounted() {
+    this.findMatchUser();
+  },
+
   watch: {
-    matchStatusReady(newVal) {
-      axios
-        .post(
-          '/match/updateMatchStatus',
-          { matchStatusReady: newVal },
-          {
-            headers: {
-              'X-XSRF-Token': document.getElementById('csrfToken').value,
-            },
-          }
-        )
-        .then(() => {
-          // TODO: polling start
-        });
+    async matchStatusReady(newVal) {
+      const res = await axios.post(
+        '/match/updateMatchStatus',
+        { matchStatusReady: newVal },
+        {
+          headers: {
+            'X-XSRF-Token': document.getElementById('csrfToken').value,
+          },
+        }
+      );
+
+      this.activeUser = res.data.activeUserCount;
+      if (newVal) {
+        this.findMatchUser();
+      }
     },
   },
 
@@ -94,10 +111,25 @@ module.exports = {
       window.location.href = this.logined ? '/auth/mypage' : '/auth/twitter';
     },
 
-    startFindMatchUser() {},
+    async findMatchUser() {
+      if (!this.matchStatusReady || this.notFindMatchUser) {
+        return;
+      }
+      const res = await axios.post(
+        '/match/findMatchUser',
+        {},
+        {
+          headers: {
+            'X-XSRF-Token': document.getElementById('csrfToken').value,
+          },
+        }
+      );
 
-    findMatchUser() {
-      //
+      if (res.data.existsRoom) {
+        window.location.href = '/match/room';
+      } else {
+        setTimeout(() => this.findMatchUser(), 5000);
+      }
     },
   },
 };

@@ -114,6 +114,18 @@ function updateUser(twitterId, userData) {
   });
 }
 
+function findByTwitterId(twitterId) {
+  return new Promise((resolve, reject) => {
+    User.findOne({ twitterId }, (error, user) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(user);
+      }
+    });
+  });
+}
+
 module.exports = {
   Constants: {
     lang: {
@@ -145,6 +157,7 @@ module.exports = {
   User,
   registerUser,
   updateUser,
+  findByTwitterId,
   getConnectionTypeLabels,
   getMatchConditionConnectionLabels,
   getMatchConditionRatingLabels,

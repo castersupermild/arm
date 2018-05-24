@@ -2,32 +2,13 @@ const express = require('express');
 const logger = require('../logging/logger').appLogger;
 
 const router = express.Router();
+const userModule = require('../models/user');
 const roomModule = require('../models/room');
 const userHelper = require('../helpers/modules/user');
 const matchHelper = require('../helpers/modules/match');
 
-const roomConstants = roomModule.constants;
-
 router.get('/', userHelper.isAuthenticated, (req, res /* , next */) => {
   logger.info('TODO: find or create room.');
-  const currentTwitterId = userHelper.getTwitterId(req);
-  roomModule.Room.find(
-    {
-      $or: [
-        {
-          userId1: currentTwitterId,
-          status1: { $ne: roomConstants.roomStatus.STATUS_LEFT },
-        },
-        {
-          userId2: currentTwitterId,
-          status2: { $ne: roomConstants.roomStatus.STATUS_LEFT },
-        },
-      ],
-    },
-    (error, room) => {
-      logger.info(room);
-    }
-  );
   res.redirect('/match/room');
 });
 
@@ -47,7 +28,7 @@ router.post('/updateMatchStatus', userHelper.isAuthenticated, (
     );
     matchHelper.removeWaitingUser(currentUser);
   }
-  res.json({ status: true });
+  res.json({ status: true, activeUserCount: matchHelper.countActiveUser() });
 });
 
 router.post('/findMatchUser', userHelper.isAuthenticated, async (
@@ -55,40 +36,60 @@ router.post('/findMatchUser', userHelper.isAuthenticated, async (
   res /* . next */
 ) => {
   const currentUser = req.session.user;
-  let roomId = null;
+  let existsRoom = false;
   if (matchHelper.isMatchReady(currentUser)) {
     const matchRoom = await roomModule.getCurrentUserRoom(
       currentUser.twitterId
     );
     if (matchRoom) {
-      // eslint-disable-next-line prefer-destructuring
-      roomId = matchRoom.roomId;
+      existsRoom = true;
+      // TODO....
+      matchHelper.updateStatusToMatching(matchRoom.userId1);
+      matchHelper.updateStatusToMatching(matchRoom.userId2);
     } else {
       const targetTwitterId = matchHelper.findMatchUser(currentUser);
-      if (targetTwitterId) {
+      if (matchHelper.isMatchStatusMatching(currentUser.twitterId)) {
+        existsRoom = true;
+      } else if (
+        targetTwitterId &&
+        !matchHelper.isMatchStatusMatching(targetTwitterId)
+      ) {
+        matchHelper.updateStatusToMatching(currentUser.twitterId);
+        matchHelper.updateStatusToMatching(targetTwitterId);
         const createdRoom = await roomModule.createRoom(
           currentUser.twitterId,
           targetTwitterId
         );
-        // eslint-disable-next-line prefer-destructuring
-        roomId = createdRoom.roomId;
+        if (createdRoom) {
+          existsRoom = true;
+        }
       }
     }
   }
   return res.json({
-    roomId,
+    existsRoom,
   });
 });
 
-router.get('/room', userHelper.isAuthenticated, (req, res /* , next */) => {
+router.get('/room', userHelper.isAuthenticated, async (
+  req,
+  res /* , next */
+) => {
+  const currentUser = req.session.user;
+  const matchRoom = await roomModule.getCurrentUserRoom(currentUser.twitterId);
+  if (!matchRoom) {
+    res.redirect('/');
+    return;
+  }
+
+  const player1 = await userModule.findByTwitterId(matchRoom.userId1);
+  const player2 = await userModule.findByTwitterId(matchRoom.userId2);
   res.render('match_room', {
     title: 'Rate Match Room',
-    player1: {
-      armsName: 'abc',
-    },
-    player2: {
-      armsName: 'Omg',
-    },
+    room: matchRoom,
+    player1,
+    player2,
+    noPolling: true,
   });
 });
 
