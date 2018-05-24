@@ -110,12 +110,12 @@ module.exports = {
       ],
       matchConditionConnections: [
         {
-          text: 'LAN Only',
-          value: 1,
-        },
-        {
           text: 'Wifi Ok',
           value: 2,
+        },
+        {
+          text: 'LAN Only',
+          value: 1,
         },
       ],
       matchConditionRatings: [
@@ -139,6 +139,23 @@ module.exports = {
       text: '',
       updateButtonLoading: false,
     };
+  },
+
+  watch: {
+    // eslint-disable-next-line func-names
+    'user.connectionType': function(newVal) {
+      if (newVal === 2) {
+        this.matchConditionConnections.pop();
+        if (this.user.matchConditionConnection === 1) {
+          this.user.matchConditionConnection = 2;
+        }
+      } else {
+        this.matchConditionConnections.push({
+          text: 'LAN Only',
+          value: 1,
+        });
+      }
+    },
   },
 
   methods: {

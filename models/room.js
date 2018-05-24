@@ -43,6 +43,7 @@ const RoomSchema = new Schema({
 const Room = mongoose.model('Room', RoomSchema);
 
 function createRoom(twitterId1, twitterId2) {
+  logger.info('TODO');
   const roomId = uuidv4();
   const room = new Room({
     roomId,
