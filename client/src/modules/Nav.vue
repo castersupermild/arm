@@ -19,7 +19,7 @@
         <v-list-tile
           v-if="logined">
           <v-list-tile-action>
-            <v-icon color="red">fa-fire</v-icon>
+            <v-icon :color="matchIconColor">fa-fire</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title class="rateMatchButton">
@@ -81,6 +81,12 @@ module.exports = {
       notFindMatchUser: this.noPolling,
       activeUser: this.activeUserCount,
     };
+  },
+
+  computed: {
+    matchIconColor() {
+      return this.matchStatusReady ? 'red' : '';
+    },
   },
 
   mounted() {
