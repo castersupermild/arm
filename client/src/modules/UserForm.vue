@@ -21,11 +21,13 @@
       />
       <v-text-field
         v-model="user.armsName"
+        :rules="[v => !!v || 'ARMS Name is required']"
         label="ARMS Name"
         required
       />
       <v-text-field
         v-model="user.friendCode"
+        :rules="friendCodeRules"
         label="Switch Friend Code"
         required
       />
@@ -98,6 +100,12 @@ module.exports = {
   data() {
     return {
       valid: true,
+      friendCodeRules: [
+        v => !!v || 'Friend Code is required',
+        v =>
+          !!v.match(/^SW(-[0-9]{4}){3}$/) ||
+          'Friend Code format(SW-1234-5678-9012) is invalid',
+      ],
       connectionTypes: [
         {
           text: 'LAN',
@@ -160,6 +168,9 @@ module.exports = {
 
   methods: {
     updateUser() {
+      if (!this.$refs.form.validate()) {
+        return;
+      }
       this.updateButtonLoading = true;
       axios
         .post('/auth/mypage/update', this.user, {
