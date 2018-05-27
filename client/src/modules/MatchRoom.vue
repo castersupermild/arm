@@ -5,10 +5,24 @@
         <v-card>
           <v-card-title primary-title>
             <div>
-              <h3 class="headline mb-0">Player1: {{ player1.armsName }}</h3>
+              <h3 class="headline mb-0">Player1:
+                <v-avatar
+                  slot="activator"
+                  size="36px"
+                >
+                  <img
+                    :src="player1.image"
+                    :alt="player1.twitterName"
+                  >
+              </v-avatar>{{ player1.armsName }}</h3>
+              <div>{{ player1.friendCode }}</div>
+              <div>Rating: {{ player1.rating }}</div>
+              <div v-show="player1.publicTwitterUsername"><a
+                :href="'https://twitter.com/'+player1.username"
+                target="_blank">@{{ player1.username }}</a></div>
+              <div v-show="player1.introduction">{{ player1.introduction }}</div>
             </div>
           </v-card-title>
-          <v-card-text>one</v-card-text>
         </v-card>
       </v-flex>
       <v-flex md1>
@@ -22,13 +36,28 @@
         <v-card>
           <v-card-title primary-title>
             <div>
-              <h3 class="headline mb-0">Player2: {{ player2.armsName }}</h3>
+              <h3 class="headline mb-0">Player2:
+                <v-avatar
+                  slot="activator"
+                  size="36px"
+                >
+                  <img
+                    :src="player2.image"
+                    :alt="player2.twitterName"
+                  >
+              </v-avatar>{{ player2.armsName }}</h3>
+              <div>{{ player2.friendCode }}</div>
+              <div>Rating: {{ player2.rating }}</div>
+              <div v-show="player2.publicTwitterUsername"><a
+                :href="'https://twitter.com/'+player2.username"
+                target="_blank">@{{ player2.username }}</a></div>
+              <div v-show="player2.introduction">{{ player2.introduction }}</div>
             </div>
           </v-card-title>
-          <v-card-text>three</v-card-text>
         </v-card>
       </v-flex>
     </v-layout>
+    <br>
     <div v-show="showButton">
       <v-btn
         round
