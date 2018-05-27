@@ -6,6 +6,7 @@ const TwitterStrategy = require('passport-twitter');
 const userModule = require('../models/user');
 const logger = require('../logging/logger').appLogger;
 const userHelper = require('../helpers/modules/user');
+const matchHelper = require('../helpers/modules/match');
 
 router.get('/mypage', userHelper.isAuthenticated, async (
   req,
@@ -43,6 +44,7 @@ router.post('/mypage/update', userHelper.isAuthenticated, (
     })
     .then(user => {
       req.session.user = user;
+      matchHelper.updateUserInfo(user);
       res.json(user);
     });
 });

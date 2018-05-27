@@ -58,9 +58,7 @@ module.exports = {
   },
 
   data() {
-    return {
-      showButton: true,
-    };
+    return {};
   },
 
   computed: {

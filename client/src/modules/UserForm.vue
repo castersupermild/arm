@@ -116,16 +116,6 @@ module.exports = {
           value: 2,
         },
       ],
-      matchConditionConnections: [
-        {
-          text: 'Wifi Ok',
-          value: 2,
-        },
-        {
-          text: 'LAN Only',
-          value: 1,
-        },
-      ],
       matchConditionRatings: [
         {
           text: 'unlimited',
@@ -149,20 +139,23 @@ module.exports = {
     };
   },
 
-  watch: {
-    // eslint-disable-next-line func-names
-    'user.connectionType': function(newVal) {
-      if (newVal === 2) {
-        this.matchConditionConnections.pop();
-        if (this.user.matchConditionConnection === 1) {
-          this.user.matchConditionConnection = 2;
-        }
-      } else {
-        this.matchConditionConnections.push({
+  computed: {
+    matchConditionConnections() {
+      const data = [
+        {
+          text: 'Wifi Ok',
+          value: 2,
+        },
+        {
           text: 'LAN Only',
           value: 1,
-        });
+        },
+      ];
+      if (this.user.connectionType === 2) {
+        data.pop();
+        this.user.matchConditionConnection = 2;
       }
+      return data;
     },
   },
 

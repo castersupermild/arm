@@ -61,20 +61,31 @@ const helper = {
     };
   },
 
+  updateUserInfo(user) {
+    const targetUser = targetUsers[user.twitterId];
+    if (targetUser) {
+      helper.addWaitingUser(user);
+    }
+  },
+
   removeWaitingUser(user) {
     delete targetUsers[user.twitterId];
   },
 
-  updateStatusToMatching(twitterId) {
-    helper.updateStatus(twitterId, STATUS_MATCHING);
+  updateStatusToMatching(user) {
+    helper.updateStatus(user, STATUS_MATCHING);
   },
 
-  updateStatusToWaiting(twitterId) {
-    helper.updateStatus(twitterId, STATUS_WAITING);
+  updateStatusToWaiting(user) {
+    helper.updateStatus(user, STATUS_WAITING);
   },
 
-  updateStatus(twitterId, status) {
-    const userInfo = targetUsers[twitterId];
+  updateStatus(user, status) {
+    let userInfo = targetUsers[user.twitterId];
+    if (!userInfo) {
+      helper.addWaitingUser(user);
+      userInfo = targetUsers[user.twitterId];
+    }
     userInfo.status = status;
   },
 

@@ -44,18 +44,18 @@ router.post('/findMatchUser', userHelper.isAuthenticated, async (
     if (matchRoom) {
       existsRoom = true;
       // TODO....
-      matchHelper.updateStatusToMatching(matchRoom.userId1);
-      matchHelper.updateStatusToMatching(matchRoom.userId2);
+      matchHelper.updateStatusToMatching(currentUser);
     } else {
       const targetTwitterId = matchHelper.findMatchUser(currentUser);
-      if (matchHelper.isMatchStatusMatching(currentUser.twitterId)) {
+      if (matchHelper.isMatchStatusMatching(currentUser)) {
         existsRoom = true;
       } else if (
         targetTwitterId &&
         !matchHelper.isMatchStatusMatching(targetTwitterId)
       ) {
-        matchHelper.updateStatusToMatching(currentUser.twitterId);
-        matchHelper.updateStatusToMatching(targetTwitterId);
+        matchHelper.updateStatusToMatching(currentUser);
+        const targetUser = await userModule.findByTwitterId(targetTwitterId);
+        matchHelper.updateStatusToMatching(targetUser);
         const createdRoom = await roomModule.createRoom(
           currentUser.twitterId,
           targetTwitterId

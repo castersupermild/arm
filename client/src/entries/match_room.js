@@ -18,6 +18,7 @@ new Vue({
       activeUserCount:
         (document.getElementById('activeUserCount') || {}).value || '0',
       noPolling: !!document.getElementById('noPolling'),
+      room: JSON.parse(document.getElementById('room').value),
       player1: JSON.parse(document.getElementById('player1').value),
       player2: JSON.parse(document.getElementById('player2').value),
     };

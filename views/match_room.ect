@@ -5,7 +5,7 @@
 <% end %>
 
 <% block 'body' : %>
-  <match-room :player1="player1" :player2="player2"></match-room>
+  <match-room :player1="player1" :player2="player2" :room="room" :current-user="currentUser"></match-room>
   <input type="hidden" id="room" value="<%= JSON.stringify(@room) %>">
   <input type="hidden" id="player1" value="<%= JSON.stringify(@player1) %>">
   <input type="hidden" id="player2" value="<%= JSON.stringify(@player2) %>">
