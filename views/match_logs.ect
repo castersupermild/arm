@@ -1,0 +1,14 @@
+<% extend 'base.ect' %>
+
+<% block 'title' : %>
+  <title><%= @title %></title>
+<% end %>
+
+<% block 'body' : %>
+  <match-logs :logs="logs"></match-logs>
+  <input type="hidden" id="logs" value="<%= JSON.stringify(@matchLogs) %>">
+<% end %>
+
+<% block 'scripts' : %>
+  <%- @helpers.assetPath.jsPath('match_logs.js') %>
+<% end %>

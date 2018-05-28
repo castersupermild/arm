@@ -8,11 +8,6 @@ const roomModule = require('../models/room');
 const userHelper = require('../helpers/modules/user');
 const matchHelper = require('../helpers/modules/match');
 
-// router.get('/', userHelper.isAuthenticated, (req, res /* , next */) => {
-//   logger.info('TODO: find or create room.');
-//   res.redirect('/match/room');
-// });
-
 router.post('/updateMatchStatus', userHelper.isAuthenticated, async (
   req,
   res /* . next */
@@ -82,19 +77,13 @@ router.post('/room/result/update', userHelper.isAuthenticated, async (
     const user2 = await userModule.findByTwitterId(updatedRoom.userId2);
     const user1Rating = user1.rating;
     const user2Rating = user2.rating;
-    const rateData =
+    const rateData = EloRating.calculate(
+      user1Rating,
+      user2Rating,
       updatedRoom.result1 === 1
-        ? EloRating.calculate(user1Rating, user2Rating)
-        : EloRating.calculate(user2Rating, user1Rating);
-
-    const player1Rating =
-      updatedRoom.result1 === 1
-        ? rateData.playerRating
-        : rateData.opponentRating;
-    const player2Rating =
-      updatedRoom.result1 === 2
-        ? rateData.playerRating
-        : rateData.opponentRating;
+    );
+    const player1Rating = rateData.playerRating;
+    const player2Rating = rateData.opponentRating;
     updatedRoom = await roomModule.updateRoom(roomId, {
       player1Rating,
       player2Rating,
@@ -169,6 +158,54 @@ router.post('/getLatestRoomInfo', async (req, res /* , next */) => {
   const room = await roomModule.getRoomById(req.body.roomId);
   res.json({
     room,
+  });
+});
+
+router.get('/logs', userHelper.isAuthenticated, async (
+  req,
+  res /* , next */
+) => {
+  const currentTwitterId = req.session.user.twitterId;
+  const sortedRooms = await roomModule.getRoomsByTwitterId(currentTwitterId);
+  const matchLogs = sortedRooms.map(room => {
+    let result = 'invalid';
+    let opponentName = null;
+    let myRating = null;
+    let opponentRating = null;
+    let changeRate = null;
+    if (room.userId1 === currentTwitterId) {
+      if (room.result1 === 1) {
+        result = 'win';
+      } else if (room.result1 === 2) {
+        result = 'lose';
+      }
+      myRating = room.player1Rating;
+      opponentName = room.armsName2;
+      opponentRating = room.player2Rating;
+      changeRate = room.player1ChangeRating;
+    } else {
+      if (room.result1 === 1) {
+        result = 'lose';
+      } else if (room.result2 === 2) {
+        result = 'win';
+      }
+      myRating = room.player2Rating;
+      opponentName = room.armsName1;
+      opponentRating = room.player1Rating;
+      changeRate = room.player2ChangeRating;
+    }
+    return {
+      result,
+      myRating,
+      opponentName,
+      opponentRating,
+      changeRate,
+    };
+  });
+
+  res.render('match_logs', {
+    title: 'Match Log',
+    matchLogs,
   });
 });
 

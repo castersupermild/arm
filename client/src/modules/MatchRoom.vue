@@ -119,8 +119,14 @@
           </v-card-title>
         </v-card>
       </div>
-      <div v-else>
+      <div v-else-if="invalidMatchResultMessage">
         {{ invalidMatchResultMessage }}
+      </div>
+    </div>
+    <div v-else-if="playerHasLeft">
+      <h4>Result</h4>
+      <div>
+        {{ playerLeftMessage }}
       </div>
     </div>
 
@@ -152,14 +158,7 @@ module.exports = {
   },
 
   mounted() {
-    if (
-      (this.isPlayer1() &&
-        (this.room.result1 === 1 || this.room.result1 === 2) &&
-        this.room.result2 === 0) ||
-      (this.isPlayer2() &&
-        (this.room.result2 === 1 || this.room.result2 === 2) &&
-        this.room.result1 === 0)
-    ) {
+    if (!this.existsMatchResult && (this.isPlayer1() || this.isPlayer2())) {
       this.waitingResult = true;
       this.getLatestRoomInfo();
     }
@@ -198,6 +197,21 @@ module.exports = {
 
     existsMatchResult() {
       return this.room.result1 !== 0 && this.room.result2 !== 0;
+    },
+
+    playerHasLeft() {
+      return this.room.result1 === 3 || this.room.result2 === 3;
+    },
+
+    playerLeftMessage() {
+      if (this.room.result1 === 3 && this.room.result2 === 3) {
+        return `Both Players have left...`;
+      } else if (this.room.result1 === 3) {
+        return `Player1 has left...`;
+      } else if (this.room.result2 === 3) {
+        return `Player2 has left...`;
+      }
+      return null;
     },
 
     validMatchResult() {
@@ -300,7 +314,11 @@ module.exports = {
       if (res.data.room) {
         this.room = res.data.room;
         if (this.existsMatchResult) {
-          this.waitingResult = false;
+          if (this.validMatchResult && this.room.player1Rating === 0) {
+            setTimeout(() => this.getLatestRoomInfo(), 5000);
+          } else {
+            this.waitingResult = false;
+          }
         } else {
           setTimeout(() => this.getLatestRoomInfo(), 5000);
         }

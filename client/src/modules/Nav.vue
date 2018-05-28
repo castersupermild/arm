@@ -48,6 +48,16 @@
             <v-list-tile-title>Rate Match Waiting Users: {{ activeUser }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <v-list-tile
+          v-if="logined"
+          href="/match/logs">
+          <v-list-tile-action>
+            <v-icon>memory</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Match Logs</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
         <v-list-tile href="/ranking">
           <v-list-tile-action>
             <v-icon>format_list_numbered</v-icon>
@@ -82,7 +92,7 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"/>
       <v-toolbar-title><a
         href="/"
-        class="appTitle">Name TBD...</a></v-toolbar-title>
+        class="appTitle">Name TBD...(α version)</a></v-toolbar-title>
     </v-toolbar>
   </div>
 </template>

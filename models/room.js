@@ -13,6 +13,8 @@ const RoomSchema = new Schema({
   roomId: { type: String, index: true },
   userId1: { type: String, index: true },
   userId2: { type: String, index: true },
+  armsName1: { type: String },
+  armsName2: { type: String },
   passcode: {
     type: String,
   },
@@ -34,6 +36,8 @@ function createRoom(user1, user2) {
     roomId,
     userId1: user1.twitterId,
     userId2: user2.twitterId,
+    armsName1: user1.armsName,
+    armsName2: user2.armsName,
     passcode: String(Math.floor(Math.random() * 1000)).padStart(3, '0'),
   });
   return room.save();
@@ -67,6 +71,44 @@ function getRoomById(roomId) {
         resolve(room);
       }
     });
+  });
+}
+
+function getRoomsByTwitterId(twitterId) {
+  return new Promise((resolve, reject) => {
+    Room.find({
+      $or: [
+        {
+          userId1: twitterId,
+          result1: MATCH_RESULT_P1_WIN,
+          result2: MATCH_RESULT_P1_WIN,
+        },
+        {
+          userId1: twitterId,
+          result1: MATCH_RESULT_P2_WIN,
+          result2: MATCH_RESULT_P2_WIN,
+        },
+        {
+          userId2: twitterId,
+          result1: MATCH_RESULT_P1_WIN,
+          result2: MATCH_RESULT_P1_WIN,
+        },
+        {
+          userId2: twitterId,
+          result1: MATCH_RESULT_P2_WIN,
+          result2: MATCH_RESULT_P2_WIN,
+        },
+      ],
+    })
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .exec((error, rooms) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(rooms);
+        }
+      });
   });
 }
 
@@ -110,4 +152,5 @@ module.exports = {
   getCurrentUserRoom,
   getRoomById,
   updateRoom,
+  getRoomsByTwitterId,
 };
