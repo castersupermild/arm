@@ -90,7 +90,6 @@ function registerUser(profile, accessToken, refreshToken) {
     twitterId: profile.id,
     username: profile.username,
     twitterName: profile.displayName,
-    armsName: profile.displayName,
     image,
     accessToken,
     refreshToken,

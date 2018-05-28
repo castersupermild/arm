@@ -35,7 +35,7 @@
   <body>
     <div id="app">
       <v-app>
-        <arm-nav :logined="logined" :match-ready="matchReady" :active-user-count="activeUserCount" :no-polling="noPolling"></arm-nav>
+        <arm-nav :logined="logined" :match-ready="matchReady" :active-user-count="activeUserCount" :input-complete="inputComplete"></arm-nav>
         <v-content>
           <v-container>
             <% content 'body' %>
@@ -51,8 +51,8 @@
       <% if @helpers.user.isMatchReady(@req) : %>
         <input type="hidden" id="matchReady">
       <% end %>
-      <% if @noPolling : %>
-        <input type="hidden" id="noPolling">
+      <% if @helpers.user.isInputComplete(@req) : %>
+        <input type="hidden" id="inputComplete">
       <% end %>
     <% end %>
     <% content 'scripts' %>

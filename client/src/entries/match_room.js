@@ -17,7 +17,7 @@ new Vue({
       matchReady: !!document.getElementById('matchReady'),
       activeUserCount:
         (document.getElementById('activeUserCount') || {}).value || '0',
-      noPolling: !!document.getElementById('noPolling'),
+      inputComplete: !!document.getElementById('inputComplete'),
       roomInfo: JSON.parse(document.getElementById('room').value),
       player1: JSON.parse(document.getElementById('player1').value),
       player2: JSON.parse(document.getElementById('player2').value),

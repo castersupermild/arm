@@ -50,6 +50,14 @@ const helper = {
     return matchHelper.isMatchReady(user);
   },
 
+  isInputComplete(req) {
+    const user = helper.getUser(req);
+    if (!user || !user.friendCode || !user.armsName) {
+      return false;
+    }
+    return true;
+  },
+
   // eslint-disable-next-line consistent-return
   isAuthenticated(req, res, next) {
     if (!helper.existsSession(req)) {

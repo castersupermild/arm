@@ -86,11 +86,20 @@ router.post('/room/result/update', userHelper.isAuthenticated, async (
       updatedRoom.result1 === 1
         ? EloRating.calculate(user1Rating, user2Rating)
         : EloRating.calculate(user2Rating, user1Rating);
+
+    const player1Rating =
+      updatedRoom.result1 === 1
+        ? rateData.playerRating
+        : rateData.opponentRating;
+    const player2Rating =
+      updatedRoom.result1 === 2
+        ? rateData.playerRating
+        : rateData.opponentRating;
     updatedRoom = await roomModule.updateRoom(roomId, {
-      player1Rating: rateData.playerRating,
-      player2Rating: rateData.opponentRating,
-      player1ChangeRating: rateData.playerRating - user1Rating,
-      player2ChangeRating: rateData.opponentRating - user2Rating,
+      player1Rating,
+      player2Rating,
+      player1ChangeRating: player1Rating - user1Rating,
+      player2ChangeRating: player2Rating - user2Rating,
     });
     await userModule.updateUser(user1.twitterId, {
       rating: rateData.playerRating,

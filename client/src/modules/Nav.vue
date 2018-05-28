@@ -17,7 +17,7 @@
           </v-list-tile-content>
         </v-list-tile>
         <v-list-tile
-          v-if="logined">
+          v-if="canRateMatch">
           <v-list-tile-action>
             <v-icon :color="matchIconColor">fa-fire</v-icon>
           </v-list-tile-action>
@@ -31,7 +31,16 @@
           </v-list-tile-content>
         </v-list-tile>
         <v-list-tile
-          v-if="logined">
+          v-else-if="logined">
+          <v-list-tile-action>
+            <v-icon :color="matchIconColor">fa-fire</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Input your information at MyPage</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-list-tile
+          v-if="canRateMatch">
           <v-list-tile-action>
             <v-icon>arrow_right</v-icon>
           </v-list-tile-action>
@@ -55,6 +64,16 @@
             <v-list-tile-title>Rules</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <v-list-tile
+          v-if="logined"
+          href="/auth/logout">
+          <v-list-tile-action>
+            <v-icon>remove_circle_outline</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Logout</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar
@@ -72,13 +91,12 @@
 const axios = require('axios');
 
 module.exports = {
-  props: ['logined', 'matchReady', 'activeUserCount', 'noPolling'],
+  props: ['logined', 'matchReady', 'activeUserCount', 'inputComplete'],
 
   data() {
     return {
       drawer: null,
       matchStatusReady: this.matchReady,
-      notFindMatchUser: this.noPolling,
       activeUser: this.activeUserCount,
     };
   },
@@ -87,10 +105,14 @@ module.exports = {
     matchIconColor() {
       return this.matchStatusReady ? 'red' : '';
     },
+
+    canRateMatch() {
+      return this.logined && this.inputComplete;
+    },
   },
 
   mounted() {
-    // this.findMatchUser();
+    this.findMatchUser();
   },
 
   watch: {

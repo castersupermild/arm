@@ -14,7 +14,7 @@ new Vue({
     return {
       logined: !!document.getElementById('currentUser'),
       matchReady: !!document.getElementById('matchReady'),
-      noPolling: !!document.getElementById('noPolling'),
+      inputComplete: !!document.getElementById('inputComplete'),
       activeUserCount:
         (document.getElementById('activeUserCount') || {}).value || '0',
       user: JSON.parse(document.getElementById('userData').value),

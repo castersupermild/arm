@@ -8,6 +8,12 @@ const logger = require('../logging/logger').appLogger;
 const userHelper = require('../helpers/modules/user');
 const matchHelper = require('../helpers/modules/match');
 
+router.get('/logout', (req, res /* , next */) => {
+  matchHelper.removeWaitingUser(req.session.user);
+  req.logout();
+  res.redirect('/');
+});
+
 router.get('/mypage', userHelper.isAuthenticated, async (
   req,
   res /* , next */
