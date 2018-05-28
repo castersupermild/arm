@@ -53,7 +53,12 @@ const helper = {
   // eslint-disable-next-line consistent-return
   isAuthenticated(req, res, next) {
     if (!helper.existsSession(req)) {
-      res.redirect('/');
+      const contentType = req.get('Content-Type');
+      if (contentType && contentType.indexOf('application/json') !== -1) {
+        res.status(403).send({ error: 'please login' });
+      } else {
+        res.redirect('/');
+      }
     } else {
       return next();
     }

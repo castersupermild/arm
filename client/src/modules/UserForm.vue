@@ -57,14 +57,6 @@
 
       <v-spacer/>
 
-      <v-text-field
-        v-model="user.introduction"
-        label="Introduction"
-        multi-line
-      />
-
-      <v-spacer/>
-
       <v-btn
         :disabled="!valid"
         :loading="updateButtonLoading"

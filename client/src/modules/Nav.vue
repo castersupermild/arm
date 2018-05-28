@@ -36,7 +36,7 @@
             <v-icon>arrow_right</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title>Active User: {{ activeUser }}</v-list-tile-title>
+            <v-list-tile-title>Rate Match Waiting Users: {{ activeUser }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
         <v-list-tile href="/ranking">
@@ -90,24 +90,23 @@ module.exports = {
   },
 
   mounted() {
-    this.findMatchUser();
+    // this.findMatchUser();
   },
 
   watch: {
     async matchStatusReady(newVal) {
-      const res = await axios.post(
-        '/match/updateMatchStatus',
-        { matchStatusReady: newVal },
-        {
-          headers: {
-            'X-XSRF-Token': document.getElementById('csrfToken').value,
-          },
+      try {
+        const res = await this.updateMatchStatus(newVal);
+        if (res.data.roomId) {
+          window.location.href = `/match/room?roomId=${res.data.roomId}`;
+        } else {
+          this.activeUser = res.data.activeUserCount;
+          if (newVal) {
+            this.findMatchUser();
+          }
         }
-      );
-
-      this.activeUser = res.data.activeUserCount;
-      if (newVal) {
-        this.findMatchUser();
+      } catch (e) {
+        window.location.href = '/';
       }
     },
   },
@@ -117,8 +116,20 @@ module.exports = {
       window.location.href = this.logined ? '/auth/mypage' : '/auth/twitter';
     },
 
+    updateMatchStatus(value) {
+      return axios.post(
+        '/match/updateMatchStatus',
+        { matchStatusReady: value },
+        {
+          headers: {
+            'X-XSRF-Token': document.getElementById('csrfToken').value,
+          },
+        }
+      );
+    },
+
     async findMatchUser() {
-      if (!this.matchStatusReady || this.notFindMatchUser) {
+      if (!this.matchStatusReady) {
         return;
       }
       const res = await axios.post(
@@ -132,7 +143,7 @@ module.exports = {
       );
 
       if (res.data.existsRoom) {
-        window.location.href = '/match/room';
+        window.location.href = `/match/room?roomId=${res.data.roomId}`;
       } else {
         setTimeout(() => this.findMatchUser(), 5000);
       }

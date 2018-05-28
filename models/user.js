@@ -59,7 +59,6 @@ const UserSchema = new Schema({
   armsName: { type: String, index: true },
   rating: { type: Number, default: 1500, index: true },
   friendCode: String,
-  introduction: { type: String },
   connectionType: { type: Number, default: CONNECTION_TYPE_WIFI },
   matchConditionConnection: {
     type: Number,
@@ -98,19 +97,27 @@ function registerUser(profile, accessToken, refreshToken) {
   };
   return User.findOneAndUpdate({ twitterId: userData.twitterId }, userData, {
     upsert: true,
+    new: true,
     setDefaultsOnInsert: true,
   });
 }
 
 function updateUser(twitterId, userData) {
   return new Promise((resolve, reject) => {
-    User.findOneAndUpdate({ twitterId }, userData, (error, user) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(user);
+    User.findOneAndUpdate(
+      { twitterId },
+      userData,
+      {
+        new: true,
+      },
+      (error, user) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(user);
+        }
       }
-    });
+    );
   });
 }
 

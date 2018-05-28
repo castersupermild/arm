@@ -16,6 +16,10 @@ const RoomSchema = new Schema({
   passcode: {
     type: String,
   },
+  player1Rating: { type: Number, default: 0 },
+  player2Rating: { type: Number, default: 0 },
+  player1ChangeRating: { type: Number, default: 0 },
+  player2ChangeRating: { type: Number, default: 0 },
   result1: { type: Number, default: MATCH_RESULT_WAITING, index: true },
   result2: { type: Number, default: MATCH_RESULT_WAITING, index: true },
   createdAt: { type: Date, default: Date.now },
@@ -23,16 +27,47 @@ const RoomSchema = new Schema({
 
 const Room = mongoose.model('Room', RoomSchema);
 
-function createRoom(twitterId1, twitterId2) {
+function createRoom(user1, user2) {
   logger.info('TODO');
   const roomId = uuidv4();
   const room = new Room({
     roomId,
-    userId1: twitterId1,
-    userId2: twitterId2,
+    userId1: user1.twitterId,
+    userId2: user2.twitterId,
     passcode: String(Math.floor(Math.random() * 1000)).padStart(3, '0'),
   });
   return room.save();
+}
+
+function updateRoom(roomId, roomData) {
+  return new Promise((resolve, reject) => {
+    Room.findOneAndUpdate(
+      { roomId },
+      roomData,
+      {
+        new: true,
+      },
+      (error, room) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(room);
+        }
+      }
+    );
+  });
+}
+
+function getRoomById(roomId) {
+  return new Promise((resolve, reject) => {
+    Room.findOne({ roomId }, (error, room) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(room);
+      }
+    });
+  });
 }
 
 function getCurrentUserRoom(currentTwitterId) {
@@ -73,4 +108,6 @@ module.exports = {
   Room,
   createRoom,
   getCurrentUserRoom,
+  getRoomById,
+  updateRoom,
 };

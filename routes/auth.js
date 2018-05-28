@@ -40,11 +40,12 @@ router.post('/mypage/update', userHelper.isAuthenticated, (
       matchConditionConnection: params.matchConditionConnection,
       matchConditionRating: params.matchConditionRating,
       publicTwitterUsername: params.publicTwitterUsername,
-      introduction: params.introduction,
     })
     .then(user => {
       req.session.user = user;
-      matchHelper.updateUserInfo(user);
+      if (matchHelper.isMatchReady(user)) {
+        matchHelper.updateUserInfo(user);
+      }
       res.json(user);
     });
 });

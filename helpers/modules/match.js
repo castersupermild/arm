@@ -2,9 +2,6 @@ const userModule = require('../../models/user');
 
 const userConstants = userModule.Constants;
 
-const STATUS_WAITING = 1;
-const STATUS_MATCHING = 2;
-
 const targetUsers = {};
 
 const matchConnection = (user1, user2) => {
@@ -53,7 +50,7 @@ const helper = {
   addWaitingUser(user) {
     targetUsers[user.twitterId] = {
       twitterId: user.twitterId,
-      status: STATUS_WAITING,
+      // status: STATUS_WAITING,
       connectionType: user.connectionType,
       rating: user.rating,
       matchConditionConnection: user.matchConditionConnection,
@@ -64,7 +61,10 @@ const helper = {
   updateUserInfo(user) {
     const targetUser = targetUsers[user.twitterId];
     if (targetUser) {
-      helper.addWaitingUser(user);
+      targetUser.connectionType = user.connectionType;
+      targetUser.rating = user.rating;
+      targetUser.matchConditionConnection = user.matchConditionConnection;
+      targetUser.matchConditionRating = user.matchConditionRating;
     }
   },
 
@@ -72,39 +72,14 @@ const helper = {
     delete targetUsers[user.twitterId];
   },
 
-  updateStatusToMatching(user) {
-    helper.updateStatus(user, STATUS_MATCHING);
-  },
-
-  updateStatusToWaiting(user) {
-    helper.updateStatus(user, STATUS_WAITING);
-  },
-
-  updateStatus(user, status) {
-    let userInfo = targetUsers[user.twitterId];
-    if (!userInfo) {
-      helper.addWaitingUser(user);
-      userInfo = targetUsers[user.twitterId];
-    }
-    userInfo.status = status;
-  },
-
   isMatchReady(user) {
     return !!targetUsers[user.twitterId];
-  },
-
-  isMatchStatusMatching(twitterId) {
-    const user = targetUsers[twitterId];
-    return user && user.status === STATUS_MATCHING;
   },
 
   findMatchUser(currentUser) {
     const currentTwitterId = currentUser.twitterId;
     const candidates = Object.keys(targetUsers).filter(twitterId => {
       if (twitterId === currentTwitterId) {
-        return false;
-      }
-      if (targetUsers[twitterId].status === STATUS_MATCHING) {
         return false;
       }
       return matchCondition(currentUser, targetUsers[twitterId]);
