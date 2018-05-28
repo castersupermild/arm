@@ -133,6 +133,21 @@ function findByTwitterId(twitterId) {
   });
 }
 
+function getUsersSortByRating(count) {
+  return new Promise((resolve, reject) => {
+    User.find({})
+      .sort({ rating: -1 })
+      .limit(count)
+      .exec((error, users) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(users);
+        }
+      });
+  });
+}
+
 module.exports = {
   Constants: {
     lang: {
@@ -168,4 +183,5 @@ module.exports = {
   getConnectionTypeLabels,
   getMatchConditionConnectionLabels,
   getMatchConditionRatingLabels,
+  getUsersSortByRating,
 };

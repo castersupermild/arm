@@ -17,6 +17,7 @@ const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth').router;
 const matchRouter = require('./routes/match');
 const ruleRouter = require('./routes/rule');
+const rankingRouter = require('./routes/ranking');
 
 const app = express();
 
@@ -84,6 +85,7 @@ app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/match', matchRouter);
 app.use('/rule', ruleRouter);
+app.use('/ranking', rankingRouter);
 
 // mongodb initialize
 const mongodbConfig = config.get('mongodb');

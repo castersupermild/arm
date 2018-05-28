@@ -1,0 +1,34 @@
+<% extend 'base.ect' %>
+
+<% block 'title' : %>
+  <title><%= @title %></title>
+<% end %>
+
+<% block 'body' : %>
+  <div>
+    <v-card>
+      <% for user in @users : %>
+          <v-card-title primary-title>
+            <div>
+              <h3 class="mb-0"><%- user.ranking %>: <v-avatar
+                slot="activator"
+                size="24px"
+              >
+                  <img
+                    src="<%= user.image %>"
+                    alt="<%= user.twitterName %>"
+                  >
+              </v-avatar><%= user.armsName %> Rating: <%= user.rating %></h3>
+              <% if user.publicTwitterUsername : %>
+                <div><a href="http://twitter.com/<%= user.username %>" target="_blank">@<%= user.username %></a></div>
+              <% end %>
+            </div>
+          </v-card-title>
+      <% end %>
+    </v-card>
+  </div>
+<% end %>
+
+<% block 'scripts' : %>
+  <%- @helpers.assetPath.jsPath('index.js') %>
+<% end %>
